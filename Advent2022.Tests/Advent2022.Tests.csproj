@@ -44,6 +44,7 @@
       <None Remove="Data\problem-10-sample-input.txt" />
       <None Remove="Data\problem-11-full-input.txt" />
       <None Remove="Data\problem-11-sample-input.txt" />
+      <None Remove="Data\problem-12-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-01-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-01-full-input.txt" />
       <EmbeddedResource Include="Data\problem-10-full-input.txt" />
@@ -61,6 +62,7 @@
       <EmbeddedResource Include="Data\problem-08-full-input.txt" />
       <EmbeddedResource Include="Data\problem-09-full-input.txt" />
       <EmbeddedResource Include="Data\problem-11-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-12-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-11-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-10-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-09-sample2-input.txt" />
