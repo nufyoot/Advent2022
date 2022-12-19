@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="3.1.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Data\problem-1-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-1-sample-input.txt" />
+      <None Remove="Data\problem-1-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-1-full-input.txt" />
+      <None Remove="Data\problem-2-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-2-sample-input.txt" />
+      <None Remove="Data\problem-2-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-2-full-input.txt" />
+      <None Remove="Data\problem-3-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-3-sample-input.txt" />
+      <None Remove="Data\problem-3-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-3-full-input.txt" />
+      <None Remove="Data\problem-4-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-4-sample-input.txt" />
+      <None Remove="Data\problem-4-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-4-full-input.txt" />
+      <None Remove="Data\problem-5-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-5-sample-input.txt" />
+      <None Remove="Data\problem-5-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-5-full-input.txt" />
+      <None Remove="Data\problem-6-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-6-full-input.txt" />
+      <None Remove="Data\problem-7-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-7-sample-input.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Advent2022\Advent2022.csproj" />
+    </ItemGroup>
+
+</Project>
