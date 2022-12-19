@@ -1,6 +1,6 @@
 ﻿namespace Advent2022;
 
-public static class Problem1
+public static class Problem01
 {
     private class Elf
     {

@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Advent2022;
 
-public static class Problem5
+public static class Problem05
 {
     private class CraneInstruction
     {
@@ -15,7 +15,7 @@ public static class Problem5
 
         public static CraneInstruction Parse(string input)
         {
-            if (Pattern.Match(input) is { } match)
+            if (Pattern.Match(input) is { Success: true } match)
             {
                 return new CraneInstruction
                 {

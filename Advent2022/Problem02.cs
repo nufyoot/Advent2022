@@ -1,6 +1,6 @@
 namespace Advent2022;
 
-public static class Problem2
+public static class Problem02
 {
     private enum Choice
     {

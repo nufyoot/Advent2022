@@ -1,6 +1,6 @@
 namespace Advent2022;
 
-public static class Problem4
+public static class Problem04
 {
     private class SectionRange
     {

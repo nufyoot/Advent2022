@@ -1,6 +1,6 @@
 namespace Advent2022;
 
-public static class Problem6
+public static class Problem06
 {
     public static async Task<string> SolvePart1Async(Stream input)
     {
