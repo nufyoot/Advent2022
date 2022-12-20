@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace Advent2022;
@@ -12,13 +11,13 @@ public static class Problem11
 
         public Func<long, long> InspectOperation { get; set; } = _ => throw new NotImplementedException();
 
-        public long TestDivisor { get; set; } = 0;
+        public long TestDivisor { get; set; }
 
-        public long TestTrueMonkeyIndex { get; set; } = 0;
+        public long TestTrueMonkeyIndex { get; set; }
 
-        public long TestFalseMonkeyIndex { get; set; } = 0;
+        public long TestFalseMonkeyIndex { get; set; }
 
-        public long InspectionCount { get; set; } = 0;
+        public long InspectionCount { get; set; }
     }
 
 
@@ -76,7 +75,7 @@ public static class Problem11
 
         while (await reader.ReadLineAsync() is { } line)
         {
-            if (line == String.Empty)
+            if (line == string.Empty)
             {
                 line = await reader.ReadLineAsync() ?? throw new NotImplementedException();
             }
@@ -84,7 +83,7 @@ public static class Problem11
             var monkey = new Monkey();
 
             var startingItemsLine = await reader.ReadLineAsync() ?? throw new NotImplementedException();
-            var startingItems = startingItemsLine.Substring("  Starting items: ".Length).Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var startingItems = startingItemsLine.Substring("  Starting items: ".Length).Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var item in startingItems)
             {
                 monkey.Items.Enqueue(long.Parse(item));

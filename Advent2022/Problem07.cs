@@ -93,7 +93,6 @@ public static class Problem07
         int candidateSize = int.MaxValue;
         int used = rootNode.GetTotalSize();
         int minToFree = used - 40_000_000;
-        int total = 0;
 
         pendingVisits.Enqueue(rootNode);
 

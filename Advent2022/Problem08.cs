@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Advent2022;
+﻿namespace Advent2022;
 
 public static class Problem08
 {
@@ -103,7 +101,7 @@ public static class Problem08
 
         int visibleCount = 0;
 
-        void checkCurrentVisibility(ref char champ, Tree current)
+        void CheckCurrentVisibility(ref char champ, Tree current)
         {
             if (current.Height > champ)
             {
@@ -114,53 +112,47 @@ public static class Problem08
                 }
                 champ = current.Height;
             }
-
-            if (champ == '9')
-            {
-                return;
-            }
         }
 
         // left -> right
-        for (int r = 0; r < grid.Count; r++)
+        foreach (var row in grid)
         {
-            char champ = (char)('0' - 1);
-            for (int c = 0; c < grid[r].Length; c++)
+            var champ = (char)('0' - 1);
+            foreach (var cell in row)
             {
-                checkCurrentVisibility(ref champ, grid[r][c]);
+                CheckCurrentVisibility(ref champ, cell);
             }
         }
 
         // right -> left
-        for (int r = 0; r < grid.Count; r++)
+        foreach (var row in grid)
         {
-            char champ = (char)('0' - 1);
-            for (int c = grid[r].Length - 1; c >= 0; c--)
+            var champ = (char)('0' - 1);
+            for (var c = row.Length - 1; c >= 0; c--)
             {
-                checkCurrentVisibility(ref champ, grid[r][c]);
+                CheckCurrentVisibility(ref champ, row[c]);
             }
         }
 
         // top -> bottom
-        for (int c = 0; c < grid[0].Length; c++)
+        for (var c = 0; c < grid[0].Length; c++)
         {
-            char champ = (char)('0' - 1);
-            for (int r = 0; r < grid.Count; r++)
+            var champ = (char)('0' - 1);
+            foreach (var row in grid)
             {
-                checkCurrentVisibility(ref champ, grid[r][c]);
+                CheckCurrentVisibility(ref champ, row[c]);
             }
         }
 
         // bottom -> top
-        for (int c = 0; c < grid[0].Length; c++)
+        for (var c = 0; c < grid[0].Length; c++)
         {
-            char champ = (char)('0' - 1);
-            for (int r = grid.Count - 1; r >= 0; r--)
+            var champ = (char)('0' - 1);
+            for (var r = grid.Count - 1; r >= 0; r--)
             {
-                checkCurrentVisibility(ref champ, grid[r][c]);
+                CheckCurrentVisibility(ref champ, grid[r][c]);
             }
         }
-
 
         return visibleCount.ToString();
     }

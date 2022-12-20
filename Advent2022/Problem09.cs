@@ -67,7 +67,7 @@ public static class Problem09
                         // Time for a diagonal move
                         dx = Math.Clamp(dx, -1, 1);
                         dy = Math.Clamp(dy, -1, 1);
-                        knots[k] = knots[k] with { X = knots[k].X + dx, Y = knots[k].Y + dy };
+                        knots[k] = new Position(X: knots[k].X + dx, Y: knots[k].Y + dy);
                     }
                 }
                 visitedTailPositions.Add(knots.Last());
