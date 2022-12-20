@@ -24,6 +24,10 @@
     <ItemGroup>
       <EmbeddedResource Include="Data\problem-13-full-input.txt" />
       <EmbeddedResource Include="Data\problem-13-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-14-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-14-sample-input.txt" />
+      <EmbeddedResource Include="Data\problem-15-full-input.txt" />
+      <EmbeddedResource Include="Data\problem-15-sample-input.txt" />
       <None Remove="Data\problem-01-full-input.txt" />
       <None Remove="Data\problem-01-sample-input.txt" />
       <None Remove="Data\problem-02-full-input.txt" />

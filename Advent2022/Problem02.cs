@@ -11,10 +11,10 @@ public static class Problem02
 
     private class Round
     {
-        public Choice OpponentChoice { get; init; }
-        public Choice OurChoice { get; init; }
+        private Choice OpponentChoice { get; init; }
+        private Choice OurChoice { get; init; }
 
-        public int OurChoiceScore => OurChoice switch
+        private int OurChoiceScore => OurChoice switch
         {
             Choice.Rock => 1,
             Choice.Paper => 2,
@@ -22,7 +22,7 @@ public static class Problem02
             _ => throw new NotImplementedException(),
         };
 
-        public int OurOutcomeScore => (OurChoice, OpponentChoice) switch
+        private int OurOutcomeScore => (OurChoice, OpponentChoice) switch
         {
             /* Loss */
             (Choice.Rock, Choice.Paper) => 0,
