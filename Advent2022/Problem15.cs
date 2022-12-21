@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 
 namespace Advent2022;
 
@@ -24,6 +25,11 @@ public static class Problem15
         public bool Overlaps(SensorRange other)
         {
             return MinX <= other.MaxX && MaxX >= other.MinX;
+        }
+
+        public bool Touches(SensorRange other)
+        {
+            return (MinX - other.MaxX == 1) || (other.MinX - MaxX == 1);
         }
 
         public bool Contains(int x)
@@ -115,14 +121,17 @@ public static class Problem15
             }
         }
 
-        var distressSignal = FindDistressSignal(minY, maxY, sensors);
-        
-        return "";
+        var distressSignal = FindDistressSignal(minX, minY, maxX, maxY, sensors);
+
+        var answer = (distressSignal.X * 4_000_000L) + distressSignal.Y;
+        return answer.ToString();
     }
 
-    private static Point FindDistressSignal(int minY, int maxY, List<Sensor> sensors)
+    private static Point FindDistressSignal(int minX, int minY, int maxX, int maxY, List<Sensor> sensors)
     {
-        for (var rowToCheck = minY; rowToCheck <= maxY; rowToCheck++)
+        ConcurrentBag<Point> candidates = new();
+        SensorRange boundary = new(minX, maxX);
+        Parallel.For(minY, maxY + 1, rowToCheck =>
         {
             var overlaps = GetSensorRanges(sensors, rowToCheck);
             switch (overlaps.Count)
@@ -130,17 +139,24 @@ public static class Problem15
                 case 0:
                 case > 2:
                     throw new NotImplementedException();
-                case 1:
-                    continue;
                 case 2:
-                    return new Point(
-                        Math.Max(overlaps[0].MinX, overlaps[1].MinX),
-                        rowToCheck);
+                    // Why not just return? I want to be sure we did the right thing and the point returned is
+                    // the ONLY point found.
+                    overlaps = overlaps.Select(o => o.Intersect(boundary)).ToList();
+                    var minBetweenX = overlaps.Max(o => o.MinX) - 1;
+                    var maxBetweenX = overlaps.Min(o => o.MaxX) + 1;
+                    if (minBetweenX != maxBetweenX)
+                    {
+                        // The gap is larger than one point!
+                        throw new NotImplementedException();
+                    }
+
+                    candidates.Add(new Point(minBetweenX, rowToCheck));
                     break;
             }
-        }
+        });
 
-        throw new NotImplementedException();
+        return candidates.Single();
     }
 
     private static List<SensorRange> GetSensorRanges(List<Sensor> sensors, int y)
@@ -154,9 +170,9 @@ public static class Problem15
                 var newRange = new SensorRange(sensor.Position.X - dx, sensor.Position.X + dx);
                 for (int i = 0; i < ranges.Count; i++)
                 {
-                    if (ranges[i].Overlaps(newRange))
+                    if (ranges[i].Overlaps(newRange) || ranges[i].Touches(newRange))
                     {
-                        newRange = newRange.Intersect(ranges[i]);
+                        newRange = newRange.Union(ranges[i]);
                         ranges.RemoveAt(i--);
                     }
                 }

@@ -12,8 +12,8 @@ public class Problem15Tests
     }
     
     [Theory]
-    [EmbeddedResource("Advent2022.Tests.Data.problem-15-sample-input.txt", "26", 0, 0, 20, 20)]
-    //[EmbeddedResource("Advent2022.Tests.Data.problem-15-full-input.txt", "5181556", 0, 0, 4_000_000, 4_000_000)]
+    [EmbeddedResource("Advent2022.Tests.Data.problem-15-sample-input.txt", "56000011", 0, 0, 20, 20)]
+    [EmbeddedResource("Advent2022.Tests.Data.problem-15-full-input.txt", "12817603219131", 0, 0, 4_000_000, 4_000_000)]
     public async Task TestPart2(Stream stream, string expected, int minX, int minY, int maxX, int maxY)
     {
         var solution = await Problem15.SolvePart2Async(stream, minX, minY, maxX, maxY);
