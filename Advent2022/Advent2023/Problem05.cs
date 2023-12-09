@@ -8,25 +8,85 @@ public static class Problem05
     {
         public long Start { get; } = start;
         public long End { get; } = start + length - 1;
+
+        public long Length { get; } = length;
+
+        public bool Intersects(LongRange other)
+        {
+            return Start <= other.End && End >= other.Start;
+        }
+
+        public bool Within(LongRange other)
+        {
+            return Start >= other.Start && End <= other.End;
+        }
+        
+        public LongRange? Intersect(LongRange other)
+        {
+            if (!Intersects(other))
+                return null;
+            
+            var maxStart = Math.Max(Start, other.Start);
+            var minEnd = Math.Min(End, other.End);
+
+            return new LongRange(maxStart, minEnd - maxStart + 1);
+        }
+
+        public List<LongRange> Except(LongRange other)
+        {
+            if (!Intersects(other))
+                return [this];
+            if (Within(other))
+                return [];
+            
+            var result = new List<LongRange>();
+            if (Start < other.Start)
+                result.Add(new LongRange(Start, other.Start - Start));
+            if (End > other.End)
+                result.Add(new LongRange(other.End + 1, End - other.End));
+            return result;
+        }
+
+        public override string ToString()
+        {
+            return $"{Start}..{End}({length}";
+        }
     }
     
     public static async Task<string> SolvePart1Async(Stream input)
     {
         var (seeds, ranges) = await ParseGarden(input);
-        return (
-            from seed in seeds 
-            select MapRange(seed, ranges["seed-to-soil"]) into soil 
-            select MapRange(soil, ranges["soil-to-fertilizer"]) into fertilizer 
-            select MapRange(fertilizer, ranges["fertilizer-to-water"]) into water 
-            select MapRange(water, ranges["water-to-light"]) into light 
-            select MapRange(light, ranges["light-to-temperature"]) into temperature 
-            select MapRange(temperature, ranges["temperature-to-humidity"]) into humidity 
-            select MapRange(humidity, ranges["humidity-to-location"])).Min().ToString();
+        var locations = (
+            from seed in seeds
+            select MapRange([new LongRange(seed, 1)], ranges["seed-to-soil"]) into soil
+            select MapRange(soil, ranges["soil-to-fertilizer"]) into fertilizer
+            select MapRange(fertilizer, ranges["fertilizer-to-water"]) into water
+            select MapRange(water, ranges["water-to-light"]) into light
+            select MapRange(light, ranges["light-to-temperature"]) into temperature
+            select MapRange(temperature, ranges["temperature-to-humidity"]) into humidity
+            select MapRange(humidity, ranges["humidity-to-location"]));
+        return locations.Min(l => l.Min(r => r.Start)).ToString();
     }
     
     public static async Task<string> SolvePart2Async(Stream input)
     {
-        throw new NotImplementedException();
+        var (seeds, ranges) = await ParseGarden(input);
+        var seedRanges = new List<LongRange>();
+        for (var i = 0; i < seeds.Count; i += 2)
+        {
+            seedRanges.Add(new LongRange(seeds[i], seeds[i+1]));
+        }
+        
+        var locations = (
+            from seedRange in seedRanges
+            select MapRange([seedRange], ranges["seed-to-soil"]) into soil
+            select MapRange(soil, ranges["soil-to-fertilizer"]) into fertilizer
+            select MapRange(fertilizer, ranges["fertilizer-to-water"]) into water
+            select MapRange(water, ranges["water-to-light"]) into light
+            select MapRange(light, ranges["light-to-temperature"]) into temperature
+            select MapRange(temperature, ranges["temperature-to-humidity"]) into humidity
+            select MapRange(humidity, ranges["humidity-to-location"]));
+        return locations.Min(l => l.Min(r => r.Start)).ToString();
     }
 
     private static async Task<(List<long> seeds, Dictionary<string, List<(LongRange destination, LongRange source)>> ranges)> ParseGarden(Stream input)
@@ -67,10 +127,45 @@ public static class Problem05
         return (seeds, ranges);
     }
 
-    private static long MapRange(long value, List<(LongRange destination, LongRange source)> ranges)
+    private static List<LongRange> MapRange(List<LongRange> values, List<(LongRange destination, LongRange source)> ranges)
     {
-        foreach (var range in ranges.Where(range => value >= range.source.Start && value <= range.source.End))
-            return range.destination.Start + (value - range.source.Start);
-        return value;
+        var result = new List<LongRange>();
+        var valueRangeQueue = new Queue<LongRange>(values);
+
+        while (valueRangeQueue.Count > 0)
+        {
+            var valueRange = valueRangeQueue.Dequeue();
+            
+            foreach (var (destination, source) in ranges)
+            {
+                // The value range we are looking at is entirely within the source range. Just map it back.
+                if (valueRange.Within(source))
+                {
+                    var offset = valueRange.Start - source.Start;
+                    result.Add(new LongRange(destination.Start + offset, valueRange.Length));
+                    valueRange = null;
+                    break;
+                }
+                
+                if (valueRange.Intersect(source) is { } intersection)
+                {
+                    var offset = intersection.Start - source.Start;
+                    result.Add(new LongRange(destination.Start + offset, intersection.Length));
+                    foreach (var outsideIntersection in valueRange.Except(intersection))
+                    {
+                        valueRangeQueue.Enqueue(outsideIntersection);
+                    }
+                    valueRange = null;
+                    break;
+                }
+            }
+
+            if (valueRange is not null)
+            {
+                result.Add(valueRange);
+            }
+        }
+        
+        return result;
     }
 }
