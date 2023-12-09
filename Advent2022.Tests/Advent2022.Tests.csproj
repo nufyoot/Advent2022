@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
 
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,6 +26,14 @@
     <ItemGroup>
       <EmbeddedResource Include="Advent2023\Data\problem-01-full-input.txt" />
       <EmbeddedResource Include="Advent2023\Data\problem-01-sample2-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-02-full-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-02-sample-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-03-full-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-03-sample-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-04-full-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-04-sample-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-05-full-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-05-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-13-full-input.txt" />
       <EmbeddedResource Include="Data\problem-13-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-14-full-input.txt" />
