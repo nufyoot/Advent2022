@@ -36,6 +36,8 @@
       <EmbeddedResource Include="Advent2023\Data\problem-05-sample-input.txt" />
       <EmbeddedResource Include="Advent2023\Data\problem-06-full-input.txt" />
       <EmbeddedResource Include="Advent2023\Data\problem-06-sample-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-07-full-input.txt" />
+      <EmbeddedResource Include="Advent2023\Data\problem-07-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-13-full-input.txt" />
       <EmbeddedResource Include="Data\problem-13-sample-input.txt" />
       <EmbeddedResource Include="Data\problem-14-full-input.txt" />
