@@ -80,47 +80,32 @@ public static class Problem07
     
     private static HandStrength GetStrengthPart2(string cards)
     {
-        var distinctCards = cards.Distinct().Except(['J']);
-        var champion = HandStrength.HighCard;
-        
-        foreach (var distinctCard in distinctCards)
+        var jackCount = cards.Count(c => c == 'J');
+        var otherDistinctCardsCount = cards.Where(c => c != 'J').Distinct().Count();
+        var otherDistinctCards = cards.Where(c => c != 'J').GroupBy(c => c);
+
+        return jackCount switch
         {
-            var replacedCards = cards.Replace('J', distinctCard);
-            var groups = replacedCards.GroupBy(c => c).ToList();
-
-            if (groups.Any(g => g.Count() == 5))
+            4 or 5 => HandStrength.FiveKind,
+            3 => otherDistinctCardsCount == 1 ? HandStrength.FiveKind : HandStrength.FourKind,
+            2 => otherDistinctCardsCount switch
             {
-                if (champion < HandStrength.FiveKind)
-                    champion = HandStrength.FiveKind;
-            }
-            else if (groups.Any(g => g.Count() == 4))
+                1 => HandStrength.FiveKind,
+                2 => HandStrength.FourKind,
+                3 => HandStrength.ThreeKind,
+                _ => throw new NotImplementedException()
+            },
+            1 => otherDistinctCardsCount switch
             {
-                if (champion < HandStrength.FourKind)
-                    champion = HandStrength.FourKind;
-            }
-            else if (groups.Any(g => g.Count() == 3) && groups.Any(g => g.Count() == 2))
-            {
-                if (champion < HandStrength.FullHouse)
-                    champion = HandStrength.FullHouse;
-            }
-            else if (groups.Any(g => g.Count() == 3))
-            {
-                if (champion < HandStrength.ThreeKind)
-                    champion = HandStrength.ThreeKind;
-            }
-            else if (groups.Count(g => g.Count() == 2) == 2)
-            {
-                if (champion < HandStrength.TwoPair)
-                    champion = HandStrength.TwoPair;
-            }
-            else if (groups.Any(g => g.Count() == 2))
-            {
-                if (champion < HandStrength.OnePair)
-                    champion = HandStrength.OnePair;
-            }
-        }
-
-        return champion;
+                1 => HandStrength.FiveKind,
+                2 => otherDistinctCards.Any(g => g.Count() == 3) ? HandStrength.FourKind : HandStrength.FullHouse,
+                3 => HandStrength.ThreeKind,
+                4 => HandStrength.OnePair,
+                _ => throw new NotImplementedException()
+            },
+            0 => GetStrengthPart1(cards),
+            _ => throw new NotImplementedException()
+        };
     }
 
     private static int GetCardStrength(char card, bool useJoker)
