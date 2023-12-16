@@ -116,67 +116,85 @@ public static class Problem10
         var grid = await ParseGrid(input);
         grid.WalkMainLoop();
         
-        // Replace the 'S' as the starting point 
+        // Replace the starting position with the correct letter
         var start = grid.GetStartingPosition();
         var (up, down, left, right) = (start.Up, start.Down, start.Left, start.Right);
         
-        
-        // Now find the bits that are inside the main loop
-        // Start with north -> south
-        var insideLoopGroundCount = 0;
+        if (up?.CanGoDown == true && down?.CanGoUp == true)
+            start.SetChar('|');
+        else if (up?.CanGoDown == true && left?.CanGoRight == true)
+            start.SetChar('J');
+        else if (up?.CanGoDown == true && right?.CanGoLeft == true)
+            start.SetChar('L');
+        else if (down?.CanGoUp == true && left?.CanGoRight == true)
+            start.SetChar('7');
+        else if (down?.CanGoUp == true && right?.CanGoLeft == true)
+            start.SetChar('F');
+        else
+            throw new NotImplementedException();
+
+        int insideLoopCount = 0;
         for (var x = 0; x < grid.Width; x++)
         {
-            var loopStatus = LoopWalkStatus.Outside;
-            var potential = 0;
+            var walkStatus = LoopWalkStatus.Outside;
             for (var y = 0; y < grid.Height; y++)
             {
                 var c = new Coordinate(grid, x, y);
-                if (c.Distance.HasValue)
+                if (!c.Distance.HasValue)
                 {
-                    switch (loopStatus)
-                    {
-                        case LoopWalkStatus.OnLoopPreviousOutside or LoopWalkStatus.OnLoopPreviousInside when c.CanGoUp:
-                            continue;
-                        case LoopWalkStatus.OnLoopPreviousOutside when !c.CanGoUp:
-                            loopStatus = LoopWalkStatus.OnLoopPreviousInside;
-                            continue;
-                        case LoopWalkStatus.OnLoopPreviousInside when !c.CanGoUp:
-                            loopStatus = LoopWalkStatus.OnLoopPreviousOutside;
-                            continue;
-                        case LoopWalkStatus.Outside:
-                            loopStatus = LoopWalkStatus.OnLoopPreviousOutside;
-                            break;
-                        case LoopWalkStatus.Inside:
-                            insideLoopGroundCount += potential;
-                            potential = 0;
-                            loopStatus = LoopWalkStatus.OnLoopPreviousInside;
-                            break;
-                    }
+                    // We stepped on a tile not on the loop. If we are inside the loop, count this tile.
+                    if (walkStatus == LoopWalkStatus.Inside)
+                        insideLoopCount++;
                 }
-                else if (!c.Distance.HasValue)
+                else
                 {
-                    switch (loopStatus)
+                    // Ok, we stepped on a loop tile - we need to figure out how to move forward from here.
+                    if (c.CanGoLeft && c.CanGoRight)
                     {
-                        case LoopWalkStatus.OnLoopPreviousOutside:
-                            loopStatus = LoopWalkStatus.Inside;
-                            potential = 1;
-                            break;
-                        case LoopWalkStatus.Inside:
-                            potential++;
-                            break;
-                        case LoopWalkStatus.OnLoopPreviousInside:
-                            loopStatus = LoopWalkStatus.Outside;
-                            break;
-                        case LoopWalkStatus.Outside:
-                            break;
-                        default:
+                        // We stepped on a '-' tile, which means we just flip inside/outside status
+                        walkStatus = walkStatus.FlipInsideOutside();
+                    }
+                    else if (c.CanGoUp && c.CanGoDown)
+                    {
+                        // If we can go up and down, then we already captured being on the loop, and we're just walking along. Change nothing.
+                        continue;
+                    }
+                    else if (c.CanGoUp)
+                    {
+                        if (c.CanGoLeft)
+                        {
+                            if ((walkStatus & LoopWalkStatus.Right) == LoopWalkStatus.Right)
+                                // We entered from the right and just went left. Flip inside/outside
+                                walkStatus = walkStatus.FlipInsideOutside();
+                        }
+                        else if (c.CanGoRight)
+                        {
+                            if ((walkStatus & LoopWalkStatus.Left) == LoopWalkStatus.Left)
+                                // We entered from the right and just went left. Flip inside/outside
+                                walkStatus = walkStatus.FlipInsideOutside();
+                        }
+                        else
+                            throw new NotImplementedException();
+                        
+                        // Remove the fact that we entered from a direction earlier
+                        walkStatus &= ~LoopWalkStatus.EntranceDirection;
+                        // Remove the fact we are on the loop
+                        walkStatus &= ~LoopWalkStatus.OnLoop;
+                    }
+                    else if (c.CanGoDown)
+                    {
+                        if (c.CanGoLeft)
+                            walkStatus |= LoopWalkStatus.OnLoopLeftEntrance;
+                        else if (c.CanGoRight)
+                            walkStatus |= LoopWalkStatus.OnLoopRightEntrance;
+                        else
                             throw new NotImplementedException();
                     }
                 }
             }
         }
 
-        return insideLoopGroundCount.ToString();
+        return insideLoopCount.ToString();
     }
 
     private static async Task<Grid> ParseGrid(Stream input)
@@ -192,11 +210,36 @@ public static class Problem10
         return new Grid(map);
     }
 
+    [Flags]
     private enum LoopWalkStatus
     {
-        Outside,
-        Inside,
-        OnLoopPreviousOutside,
-        OnLoopPreviousInside,
+        Outside = 1,
+        Inside = 2,
+        OnLoop = 4,
+        Left = 8,
+        Right = 16,
+        OnLoopRightEntrance = OnLoop | Right,
+        OnLoopLeftEntrance = OnLoop | Left,
+        EntranceDirection = Left | Right,
+    }
+
+    private static bool IsOnLoop(this LoopWalkStatus status)
+    {
+        return (status & LoopWalkStatus.OnLoop) == LoopWalkStatus.OnLoop;
+    }
+
+    private static LoopWalkStatus FlipInsideOutside(this LoopWalkStatus status)
+    {
+        return status ^ (LoopWalkStatus.Inside | LoopWalkStatus.Outside);
+    }
+    
+    private static bool IsInside(this LoopWalkStatus status)
+    {
+        return (status & LoopWalkStatus.Inside) == LoopWalkStatus.Inside;
+    }
+    
+    private static bool IsOutside(this LoopWalkStatus status)
+    {
+        return (status & LoopWalkStatus.Outside) == LoopWalkStatus.Outside;
     }
 }
